@@ -4,7 +4,7 @@
 
 This project is the live-coding demo from the **NG Poland** talk about **Signal Forms metadata** — how to build custom, reusable field features using metadata and a field wrapper component.
 
-> ⚠️ Signal Forms are experimental. APIs shown here may change in future Angular versions.
+Signal Forms are **stable since Angular v22** — everything shown here is public, supported API.
 
 ---
 
@@ -33,11 +33,11 @@ But then you write the HTML... and every single field wants a whole entourage of
 So your template ends up looking like this — *for every field*:
 
 ```html
-<label for="bio">
+<label>
   Bio
   @if (bioIsRequired) { <span class="star">*</span> }
 </label>
-<input id="bio" [control]="userForm.bio" />
+<input [formField]="userForm.bio" />
 <span class="hint">At least 20 characters, at least 5 words</span>
 @for (error of userForm.bio().errors(); track error) {
   <span class="error">{{ error.message }}</span>
@@ -54,8 +54,8 @@ Lots and lots of repeating HTML surrounding every input. And worse — the infor
 We create a **field wrapper** — a component that receives the input control via content projection and adds all of the surrounding features:
 
 ```html
-<app-field-wrapper label="Bio" [field]="userForm.bio">
-  <textarea [control]="userForm.bio"></textarea>
+<app-field-wrapper label="Bio">
+  <textarea [formField]="userForm.bio"></textarea>
 </app-field-wrapper>
 ```
 
@@ -63,18 +63,18 @@ The wrapper needs information — label, required flag, limitations for hints, e
 
 ### The field state already knows a lot
 
-In Signal Forms, the wrapper gets the **field state** object, and from it, it can **auto-detect** many features:
+The wrapper doesn't even need the field as an input — the projected content already carries the `FormField` directive. The wrapper queries it as a **content child** and gets the **field state** from it. From that state, it can **auto-detect** many features:
 
 ```ts
 // inside the field wrapper component
-readonly field = input.required<FieldTree<unknown>>();
+readonly formField = contentChild.required(FormField);
 
-readonly state = computed(() => this.field()());
+readonly state = computed(() => this.formField().state());
 
 readonly isRequired = computed(() => this.state().required());
 readonly errors     = computed(() => this.state().errors());
-readonly maxLength  = computed(() => this.state().maxLength());
-readonly min        = computed(() => this.state().min());
+readonly maxLength  = computed(() => this.state().maxLength?.());
+readonly min        = computed(() => this.state().min?.());
 ```
 
 The required star, the error messages, and even hints derived from `min`, `max`, `minLength`, `maxLength` — all of these can be rendered automatically, **without the developer writing anything twice**. One declaration in the schema, and the UI follows.
@@ -99,7 +99,7 @@ Signal Forms have a **metadata** feature, and it works a lot like Angular's depe
 | Provider — sets the value | `metadata(path, key, logicFn)` — sets the value on a field |
 | `inject(token)` — extracts the value | `state.metadata(key)` — extracts the value as a signal |
 
-In fact — **even the built-in validators use it**. The `required()` property on field state is just a convenient shortcut that extracts a boolean signal out of the general metadata structure. If you look at the source of the built-in validators, each one has a unique metadata key, and each one calls both `validate(...)` (to install the validation logic) **and** `metadata(...)` (to publish the validation metadata).
+In fact — **even the built-in validators use it**. The `required()` property on field state is just a convenient shortcut that extracts a boolean signal out of the general metadata structure (there is a built-in `REQUIRED` metadata key, along with `MIN`, `MAX`, `MIN_LENGTH`, `MAX_LENGTH`, `PATTERN`...). If you look at the source of the built-in validators, each one has a unique metadata key, and each one calls both `validate(...)` (to install the validation logic) **and** `metadata(...)` (to publish the validation metadata).
 
 ### Doing the same for `minWords`
 
@@ -108,13 +108,13 @@ In fact — **even the built-in validators use it**. The `required()` property o
 export const MIN_WORDS = createMetadataKey<number>();
 
 // 2. The setter — publish metadata inside the validator
-export function minWords<T>(path: FieldPath<string, T>, threshold: number) {
+export function minWords(path: SchemaPath<string>, threshold: number) {
   metadata(path, MIN_WORDS, () => threshold);
 
   validate(path, ({ value }) =>
     countWords(value()) >= threshold
       ? undefined
-      : customError({ kind: 'minWords', message: `At least ${threshold} words` })
+      : { kind: 'minWords', message: `At least ${threshold} words` }
   );
 }
 ```
@@ -150,9 +150,9 @@ A schema function that dynamically decides when a field is copy-paste-able. The 
 ```ts
 export const COPYABLE = createMetadataKey<boolean>();
 
-export function copyable<T>(
-  path: FieldPath<string, T>,
-  logic: LogicFn<T, boolean> = () => true
+export function copyable<TValue>(
+  path: SchemaPath<TValue>,
+  logic: LogicFn<TValue, boolean> = () => true
 ) {
   metadata(path, COPYABLE, logic);
 }
@@ -206,9 +206,9 @@ The schema function receives a `LogicFn` that produces a **prompt**. If the prom
 ```ts
 export const FILLABLE_BY_AI = createMetadataKey<string>();
 
-export function fillableByAi<T>(
-  path: FieldPath<string, T>,
-  promptLogic: LogicFn<T, string>
+export function fillableByAi<TValue>(
+  path: SchemaPath<TValue>,
+  promptLogic: LogicFn<TValue, string>
 ) {
   metadata(path, FILLABLE_BY_AI, promptLogic);
 }
