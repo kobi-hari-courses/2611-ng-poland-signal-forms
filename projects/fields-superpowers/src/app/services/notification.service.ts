@@ -1,14 +1,4 @@
-import {
-  ApplicationRef,
-  ComponentRef,
-  createComponent,
-  DOCUMENT,
-  EnvironmentInjector,
-  inject,
-  Injectable,
-  signal,
-} from '@angular/core';
-import { NotificationsHost } from './notifications-host';
+import { Injectable, signal } from '@angular/core';
 
 export type NotificationKind = 'info' | 'error';
 
@@ -22,15 +12,10 @@ const AUTO_DISMISS_MS = 3000;
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {
-  readonly #appRef = inject(ApplicationRef);
-  readonly #injector = inject(EnvironmentInjector);
-  readonly #document = inject(DOCUMENT);
-
   readonly #notifications = signal<AppNotification[]>([]);
   readonly notifications = this.#notifications.asReadonly();
 
   #nextId = 0;
-  #host?: ComponentRef<NotificationsHost>;
 
   info(message: string) {
     this.#show('info', message);
@@ -45,17 +30,8 @@ export class NotificationService {
   }
 
   #show(kind: NotificationKind, message: string) {
-    this.#ensureHost();
     const id = this.#nextId++;
     this.#notifications.update((list) => [...list, { id, kind, message }]);
     setTimeout(() => this.dismiss(id), AUTO_DISMISS_MS);
-  }
-
-  // Lazily mounts the snackbar container on <body>, so no template changes are needed
-  #ensureHost() {
-    if (this.#host) return;
-    this.#host = createComponent(NotificationsHost, { environmentInjector: this.#injector });
-    this.#appRef.attachView(this.#host.hostView);
-    this.#document.body.appendChild(this.#host.location.nativeElement);
   }
 }

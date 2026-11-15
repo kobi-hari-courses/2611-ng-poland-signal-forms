@@ -1,0 +1,31 @@
+<dialog #dialog (cancel)="onEscape($event)" (close)="onClosed()">
+  @switch (status()) {
+    @case ('downloading') {
+      <h2>Downloading AI model...</h2>
+      <progress [value]="progress()" max="1"></progress>
+      <p class="percent">{{ percent() }}%</p>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="dismiss()">Cancel</button>
+      </div>
+    }
+    @case ('error') {
+      <h2>Download failed</h2>
+      <p class="error">{{ error() }}</p>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="dismiss()">Close</button>
+        <button type="button" (click)="download()">Retry</button>
+      </div>
+    }
+    @default {
+      <h2>Enable AI features?</h2>
+      <p>
+        This app uses an AI model that runs locally in your browser. It requires a one-time
+        download, which may be large. Do you want to download it now?
+      </p>
+      <div class="actions">
+        <button type="button" class="secondary" (click)="dismiss()">Not now</button>
+        <button type="button" (click)="download()">Download</button>
+      </div>
+    }
+  }
+</dialog>

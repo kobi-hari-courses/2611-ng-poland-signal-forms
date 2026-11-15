@@ -1,0 +1,11 @@
+@for (notification of notifications(); track notification.id) {
+  <button
+    type="button"
+    class="snackbar"
+    [class]="notification.kind"
+    title="Click to dismiss"
+    (click)="dismiss(notification.id)"
+  >
+    {{ notification.message }}
+  </button>
+}

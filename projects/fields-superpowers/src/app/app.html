@@ -1,13 +1,14 @@
-﻿<main class="demo">
+<main class="demo">
   <h1>Services Playground</h1>
 
   <section class="card">
     <h2>🔔 Notification Service</h2>
     <input
+      #messageInput
       type="text"
       placeholder="Notification message"
       [value]="message()"
-      (input)="message.set($any($event.target).value)"
+      (input)="message.set(messageInput.value)"
     />
     <div class="actions">
       <button type="button" class="info" (click)="showInfo()">Show info</button>
@@ -26,13 +27,14 @@
       }
     </div>
     <textarea
+      #promptInput
       rows="4"
       placeholder="Write a prompt..."
       [value]="prompt()"
-      (input)="prompt.set($any($event.target).value)"
+      (input)="prompt.set(promptInput.value)"
     ></textarea>
     <div class="actions">
-      <button type="button" (click)="runPrompt()" [disabled]="!ai.isReady() || isRunning() || !prompt().trim()">
+      <button type="button" [disabled]="!canRun()" (click)="runPrompt()">
         {{ isRunning() ? 'Thinking...' : '✨ Run prompt' }}
       </button>
     </div>
@@ -41,3 +43,6 @@
     }
   </section>
 </main>
+
+<app-notifications-host />
+<app-ai-download-dialog />

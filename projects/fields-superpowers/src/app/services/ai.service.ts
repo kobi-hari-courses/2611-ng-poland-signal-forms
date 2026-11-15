@@ -1,15 +1,4 @@
-import {
-  ApplicationRef,
-  ComponentRef,
-  computed,
-  createComponent,
-  DOCUMENT,
-  EnvironmentInjector,
-  inject,
-  Injectable,
-  signal,
-} from '@angular/core';
-import { AiDownloadDialog } from './ai-download-dialog';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { NotificationService } from './notification.service';
 
 // Minimal typings for Chrome's built-in Prompt API (on-device model)
@@ -79,9 +68,6 @@ function errorMessage(err: unknown): string {
 
 @Injectable({ providedIn: 'root' })
 export class AiService {
-  readonly #appRef = inject(ApplicationRef);
-  readonly #injector = inject(EnvironmentInjector);
-  readonly #document = inject(DOCUMENT);
   readonly #notifications = inject(NotificationService);
 
   readonly #status = signal<AiStatus>('checking');
@@ -99,7 +85,6 @@ export class AiService {
   #enabling?: Promise<void>;
   #resolveDialog?: () => void;
   #downloadAbort?: AbortController;
-  #dialogRef?: ComponentRef<AiDownloadDialog>;
 
   constructor() {
     void this.enable();
@@ -313,7 +298,6 @@ export class AiService {
   }
 
   #openDialog(): Promise<void> {
-    this.#ensureDialogHost();
     this.#downloadDialogOpen.set(true);
     return new Promise((resolve) => (this.#resolveDialog = resolve));
   }
@@ -322,12 +306,5 @@ export class AiService {
     this.#downloadDialogOpen.set(false);
     this.#resolveDialog?.();
     this.#resolveDialog = undefined;
-  }
-
-  #ensureDialogHost() {
-    if (this.#dialogRef) return;
-    this.#dialogRef = createComponent(AiDownloadDialog, { environmentInjector: this.#injector });
-    this.#appRef.attachView(this.#dialogRef.hostView);
-    this.#document.body.appendChild(this.#dialogRef.location.nativeElement);
   }
 }
