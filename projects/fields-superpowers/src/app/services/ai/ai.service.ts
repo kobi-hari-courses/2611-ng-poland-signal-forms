@@ -1,31 +1,7 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { NotificationService } from './notification.service';
-
-// Minimal typings for Chrome's built-in Prompt API (on-device model)
-type LanguageModelAvailability = 'unavailable' | 'downloadable' | 'downloading' | 'available';
-
-interface DownloadProgressEvent extends Event {
-  loaded: number;
-  total?: number;
-}
-
-interface LanguageModelCreateOptions {
-  expectedInputs?: { type: 'text'; languages: string[] }[];
-  expectedOutputs?: { type: 'text'; languages: string[] }[];
-  signal?: AbortSignal;
-  monitor?: (monitor: EventTarget) => void;
-}
-
-interface LanguageModelSession {
-  prompt(input: string, options?: { signal?: AbortSignal }): Promise<string>;
-  clone(options?: { signal?: AbortSignal }): Promise<LanguageModelSession>;
-  destroy(): void;
-}
-
-interface LanguageModelStatic {
-  availability(options?: LanguageModelCreateOptions): Promise<LanguageModelAvailability>;
-  create(options?: LanguageModelCreateOptions): Promise<LanguageModelSession>;
-}
+import { computed, inject, Service, signal } from '@angular/core';
+import { NotificationService } from '../notification.service';
+import { AiSessionManager } from './ai-session';
+import { getLanguageModelApi, MODEL_OPTIONS, StubModelError } from './language-model';
 
 export type AiStatus =
   | 'checking'
@@ -37,27 +13,6 @@ export type AiStatus =
   | 'declined'
   | 'error';
 
-const MODEL_OPTIONS: LanguageModelCreateOptions = {
-  expectedInputs: [{ type: 'text', languages: ['en'] }],
-  expectedOutputs: [{ type: 'text', languages: ['en'] }],
-};
-
-const PROMPT_TIMEOUT_MS = 60_000;
-
-// Chromium builds without the on-device model (e.g. VS Code's integrated browser) ship a stub
-// Prompt API that reports itself as available but only echoes the input back
-const STUB_RESPONSE = /on-device model is not available|just echoing back the input/i;
-
-class StubModelError extends Error {
-  constructor() {
-    super('The browser AI API is a stub without a real on-device model');
-  }
-}
-
-function getLanguageModelApi(): LanguageModelStatic | undefined {
-  return (globalThis as { LanguageModel?: LanguageModelStatic }).LanguageModel;
-}
-
 function isAbortError(err: unknown): boolean {
   return err instanceof DOMException && (err.name === 'AbortError' || err.name === 'TimeoutError');
 }
@@ -66,9 +21,10 @@ function errorMessage(err: unknown): string {
   return err instanceof Error ? err.message : String(err);
 }
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class AiService {
   readonly #notifications = inject(NotificationService);
+  readonly #session = new AiSessionManager();
 
   readonly #status = signal<AiStatus>('checking');
   readonly #downloadProgress = signal(0);
@@ -81,14 +37,9 @@ export class AiService {
   readonly lastError = this.#lastError.asReadonly();
   readonly isDownloadDialogOpen = this.#downloadDialogOpen.asReadonly();
 
-  #baseSession?: Promise<LanguageModelSession>;
   #enabling?: Promise<void>;
   #resolveDialog?: () => void;
   #downloadAbort?: AbortController;
-
-  constructor() {
-    void this.enable();
-  }
 
   /**
    * Checks model availability and, if a download is required, asks the user for consent.
@@ -106,7 +57,7 @@ export class AiService {
     }
 
     try {
-      return await this.#promptOnce(prompt);
+      return await this.#session.prompt(prompt);
     } catch (err) {
       if (isAbortError(err)) throw new Error('The AI request timed out');
       if (err instanceof StubModelError) {
@@ -115,9 +66,9 @@ export class AiService {
       }
 
       // The session may have been destroyed or crashed - start fresh and retry once
-      this.#resetSession();
+      this.#session.reset();
       try {
-        return await this.#promptOnce(prompt);
+        return await this.#session.prompt(prompt);
       } catch (retryErr) {
         void this.#revalidate();
         throw retryErr;
@@ -127,8 +78,7 @@ export class AiService {
 
   /** Must be called synchronously from a user gesture (click) - the browser requires it to download. */
   approveDownload() {
-    const api = getLanguageModelApi();
-    if (!api) return;
+    if (!getLanguageModelApi()) return;
 
     this.#downloadAbort?.abort();
     const abort = (this.#downloadAbort = new AbortController());
@@ -137,19 +87,8 @@ export class AiService {
     this.#downloadProgress.set(0);
     this.#lastError.set(undefined);
 
-    const created = api.create({
-      ...MODEL_OPTIONS,
-      signal: abort.signal,
-      monitor: (m) =>
-        m.addEventListener('downloadprogress', (e) => {
-          const { loaded, total } = e as DownloadProgressEvent;
-          this.#downloadProgress.set(total ? loaded / total : loaded);
-        }),
-    });
-    this.#baseSession = created;
-
-    created
-      .then(() => this.#verifyModel())
+    this.#session
+      .download(abort.signal, (fraction) => this.#downloadProgress.set(fraction))
       .then(
         () => {
           if (abort.signal.aborted) return;
@@ -158,7 +97,6 @@ export class AiService {
           this.#closeDialog();
         },
         (err) => {
-          if (this.#baseSession === created) this.#baseSession = undefined;
           if (abort.signal.aborted) return;
           if (err instanceof StubModelError) {
             this.#markStub();
@@ -176,7 +114,7 @@ export class AiService {
     const status = this.#status();
     if (status === 'needs-download' || status === 'downloading') {
       this.#downloadAbort?.abort();
-      this.#baseSession = undefined;
+      this.#session.reset();
       this.#status.set('declined');
       this.#notifications.info('AI features are disabled');
     }
@@ -197,7 +135,7 @@ export class AiService {
       const availability = await api.availability(MODEL_OPTIONS);
       switch (availability) {
         case 'available':
-          await this.#verifyModel();
+          await this.#session.verify();
           this.#status.set('ready');
           return;
         case 'downloadable':
@@ -218,48 +156,9 @@ export class AiService {
     }
   }
 
-  // Sends a tiny probe prompt to make sure a real model answers (and not an echoing stub)
-  async #verifyModel() {
-    await this.#promptOnce('Reply with the single word: OK');
-  }
-
-  async #promptOnce(prompt: string): Promise<string> {
-    const base = await this.#getBaseSession();
-    // Cloning keeps each prompt independent, without accumulating conversation context
-    const session = await base.clone();
-    try {
-      const response = await session.prompt(prompt, {
-        signal: AbortSignal.timeout(PROMPT_TIMEOUT_MS),
-      });
-      if (STUB_RESPONSE.test(response)) throw new StubModelError();
-      return response;
-    } finally {
-      session.destroy();
-    }
-  }
-
   #markStub() {
-    this.#resetSession();
+    this.#session.reset();
     this.#status.set('unavailable');
-  }
-
-  #getBaseSession(): Promise<LanguageModelSession> {
-    if (!this.#baseSession) {
-      const api = getLanguageModelApi();
-      if (!api) return Promise.reject(new Error(this.#notReadyMessage()));
-      const created = api.create(MODEL_OPTIONS);
-      created.catch(() => {
-        if (this.#baseSession === created) this.#baseSession = undefined;
-      });
-      this.#baseSession = created;
-    }
-    return this.#baseSession;
-  }
-
-  #resetSession() {
-    const old = this.#baseSession;
-    this.#baseSession = undefined;
-    old?.then((s) => s.destroy()).catch(() => {});
   }
 
   // After repeated failures, verify the model is still usable (it may have been evicted)
@@ -270,7 +169,7 @@ export class AiService {
     } catch {
       // fall through and re-run the enable flow
     }
-    this.#resetSession();
+    this.#session.reset();
     this.#status.set('checking');
     await this.enable();
   }

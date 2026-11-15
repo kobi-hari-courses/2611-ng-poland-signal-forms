@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Service, signal } from '@angular/core';
 
 export type NotificationKind = 'info' | 'error';
 
@@ -10,7 +10,7 @@ export interface AppNotification {
 
 const AUTO_DISMISS_MS = 3000;
 
-@Injectable({ providedIn: 'root' })
+@Service()
 export class NotificationService {
   readonly #notifications = signal<AppNotification[]>([]);
   readonly notifications = this.#notifications.asReadonly();

@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { AiDownloadDialog } from './components/ai-download-dialog/ai-download-dialog';
 import { NotificationsHost } from './components/notifications-host/notifications-host';
-import { AiService } from './services/ai.service';
+import { AiService } from './services/ai/ai.service';
 import { NotificationService } from './services/notification.service';
 
 @Component({

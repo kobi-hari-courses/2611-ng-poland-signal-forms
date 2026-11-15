@@ -1,5 +1,5 @@
 import { Component, computed, effect, ElementRef, inject, viewChild } from '@angular/core';
-import { AiService } from '../../services/ai.service';
+import { AiService } from '../../services/ai/ai.service';
 
 @Component({
   selector: 'app-ai-download-dialog',
@@ -8,6 +8,7 @@ import { AiService } from '../../services/ai.service';
 })
 export class AiDownloadDialog {
   readonly #ai = inject(AiService);
+  // Signal queries can't be ES-private (#) fields - the compiler requires TS `private` here
   private readonly dialog = viewChild.required<ElementRef<HTMLDialogElement>>('dialog');
 
   protected readonly status = this.#ai.status;
