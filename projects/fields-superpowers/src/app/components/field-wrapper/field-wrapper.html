@@ -1,7 +1,7 @@
 <label>
   <span class="field-label">
     {{ label() }}
-    @if (state().required()) {
+    @if (required()) {
       <span class="required-marker" aria-hidden="true">*</span>
     }
   </span>
@@ -12,8 +12,8 @@
   <small class="field-hint">{{ hint }}</small>
 }
 
-@if (state().touched()) {
-  @for (error of state().errors(); track error.kind) {
+@if (touched()) {
+  @for (error of errors(); track error.kind) {
     <span class="field-error" role="alert">{{ error.message }}</span>
   }
 }
