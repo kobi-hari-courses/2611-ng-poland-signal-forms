@@ -10,22 +10,26 @@
   </label>
 
   <label>
+    Duration (minutes)
+    <input type="number" 
+      [formField]="proposalForm.durationMinutes" />
+  </label>
+
+  <label>
     Long bio
-    <textarea rows="3" [formField]="proposalForm.longBio"></textarea>
+    <textarea rows="3" 
+      [formField]="proposalForm.longBio"></textarea>
   </label>
 
   <label>
     Short bio
-    <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
-  </label>
-
-  <label>
-    Duration (minutes)
-    <input type="number" [formField]="proposalForm.durationMinutes" />
+    <textarea rows="2" 
+      [formField]="proposalForm.shortBio"></textarea>
   </label>
 
   <label>
     Organizer notes
-    <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+    <textarea rows="2" 
+      [formField]="proposalForm.organizerNotes"></textarea>
   </label>
 </form>

@@ -2,6 +2,9 @@
   /* Brand */
   --color-primary: #3f51b5;
   --color-on-primary: #ffffff;
+  --color-primary-surface: #eef2ff;
+  --color-on-primary-surface: #283593;
+  --color-primary-border: #c7d2fe;
 
   /* Neutrals */
   --color-surface: #ffffff;
@@ -25,5 +28,6 @@
 
   /* Elevation */
   --color-shadow: rgb(0 0 0 / 0.2);
+  --color-shadow-soft: rgb(63 81 181 / 0.08);
   --color-backdrop: rgb(0 0 0 / 0.4);
 }
