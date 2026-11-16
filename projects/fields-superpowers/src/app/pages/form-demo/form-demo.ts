@@ -4,6 +4,8 @@ import { FieldWrapper } from '../../components/field-wrapper/field-wrapper';
 import { SpeakerProposal } from '../../models/speaker-proposal';
 import { minWords } from '../../schema-functions/min-words';
 import { copyable } from '../../schema-functions/copyable';
+import { fillableByAI } from '../../schema-functions/fillable-by-ai';
+import { MY_BIO } from './my-bio';
 
 @Component({
   selector: 'app-form-demo',
@@ -15,7 +17,7 @@ import { copyable } from '../../schema-functions/copyable';
 export class FormDemo {
   protected readonly proposal = signal<SpeakerProposal>({
     sessionType: 'full',
-    longBio: '',
+    longBio: MY_BIO,
     shortBio: '',
     durationMinutes: 30,
     organizerNotes: '',
@@ -42,6 +44,16 @@ export class FormDemo {
 
     copyable(path.organizerNotes, (ctx) => 
       !ctx.value().includes('secret')
-    )
+    );
+
+    fillableByAI(path.shortBio, ctx => ctx.valueOf(path.longBio).length < 10 
+    ?''
+    : `
+      You are an expert bio summarizer, you need to summarize the following bio into no more 
+      than 50 words.
+
+      the following bio:
+      ${ctx.valueOf(path.longBio)}
+      `)
   });
 }

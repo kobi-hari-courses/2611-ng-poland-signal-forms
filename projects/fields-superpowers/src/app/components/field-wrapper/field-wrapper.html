@@ -14,6 +14,17 @@
       <span class="copy-icon"></span>      
     </button>
   }
+
+  @if( canBeFilledByAI()) {
+    <button utility type="button" (click)="fillByAI()">
+      @if(aiResource.isLoading()) {
+        <span class="spinner"></span>
+      } @else {
+        <span class="ai-icon"></span>
+      }
+    </button>
+
+  }
 </div>
 
 @for (hint of hints(); track $index) {
