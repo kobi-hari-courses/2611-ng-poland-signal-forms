@@ -1,10 +1,6 @@
 import type { ReadonlyFieldState } from '@angular/forms/signals';
 
-
-export function getMinMaxHint(state: ReadonlyFieldState<unknown>): string | null {
-  const min = state.min?.();
-  const max = state.max?.();
-
+export function getMinMaxHint(min: number | undefined, max: number | undefined): string | null {
   if (min !== undefined && max !== undefined) {
     return `between ${min} and ${max}`;
   }
@@ -18,10 +14,10 @@ export function getMinMaxHint(state: ReadonlyFieldState<unknown>): string | null
   return null;
 }
 
-export function getMinMaxLengthHint(state: ReadonlyFieldState<unknown>): string | null {
-  const minLength = state.minLength?.();
-  const maxLength = state.maxLength?.();
-
+export function getMinMaxLengthHint(
+  minLength: number | undefined,
+  maxLength: number | undefined,
+): string | null {
   if (minLength !== undefined && maxLength !== undefined) {
     return `Length: between ${minLength} and ${maxLength} characters.`;
   }

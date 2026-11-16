@@ -16,8 +16,8 @@ export class FieldWrapper {
   readonly state = computed(() => this.formField().state());
   protected readonly hints = computed(() =>
     [
-      getMinMaxHint(this.state()), 
-      getMinMaxLengthHint(this.state())
+      getMinMaxHint(this.state().min?.(), this.state().max?.()), 
+      getMinMaxLengthHint(this.state().minLength?.(), this.state().maxLength?.()) 
     ].filter((hint) => hint !== null),
   );
 }
