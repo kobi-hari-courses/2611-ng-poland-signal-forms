@@ -10,26 +10,72 @@
   </label>
 
   <label>
+    @let duration = proposalForm.durationMinutes();
     Duration (minutes)
-    <input type="number" 
-      [formField]="proposalForm.durationMinutes" />
+    <input type="number" [formField]="proposalForm.durationMinutes" />
+    @if (duration.min?.() !== undefined && duration.max?.() !== undefined) {
+      <small class="field-hint">between {{ duration.min?.() }} and {{ duration.max?.() }}</small>
+    }
+    @if (duration.touched()) {
+      @for (error of duration.errors(); track error.kind) {
+        <span class="field-error" role="alert">{{ error.message }}</span>
+      }
+    }
   </label>
 
   <label>
-    Long bio
-    <textarea rows="3" 
-      [formField]="proposalForm.longBio"></textarea>
+    @let longBio = proposalForm.longBio();
+    <span class="field-label">
+      Long bio
+      @if (longBio.required()) {
+        <span class="required-marker" aria-hidden="true">*</span>
+      }
+    </span>
+    <textarea rows="3" [formField]="proposalForm.longBio"></textarea>
+    @if (longBio.minLength?.() !== undefined) {
+      <small class="field-hint">Min length: {{ longBio.minLength?.() }} characters.</small>
+    }
+    @if (longBio.maxLength?.() !== undefined) {
+      <small class="field-hint">Max length: {{ longBio.maxLength?.() }} characters.</small>
+    }
+    @if (longBio.touched()) {
+      @for (error of longBio.errors(); track error.kind) {
+        <span class="field-error" role="alert">{{ error.message }}</span>
+      }
+    }
   </label>
 
   <label>
-    Short bio
-    <textarea rows="2" 
-      [formField]="proposalForm.shortBio"></textarea>
+    @let shortBio = proposalForm.shortBio();
+    <span class="field-label">
+      Short bio
+      @if (shortBio.required()) {
+        <span class="required-marker" aria-hidden="true">*</span>
+      }
+    </span>
+    <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
+    @if (shortBio.minLength?.() !== undefined) {
+      <small class="field-hint">Min length: {{ shortBio.minLength?.() }} characters.</small>
+    }
+    @if (shortBio.maxLength?.() !== undefined) {
+      <small class="field-hint">Max length: {{ shortBio.maxLength?.() }} characters.</small>
+    }
+    @if (shortBio.touched()) {
+      @for (error of shortBio.errors(); track error.kind) {
+        <span class="field-error" role="alert">{{ error.message }}</span>
+      }
+    }
   </label>
 
   <label>
+    @let organizerNotes = proposalForm.organizerNotes();
     Organizer notes
-    <textarea rows="2" 
-      [formField]="proposalForm.organizerNotes"></textarea>
+    <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+    @if (organizerNotes.minLength?.() !== undefined) {
+      <small class="field-hint">Min length: {{ organizerNotes.minLength?.() }} characters.</small>
+    }
+    @if (organizerNotes.maxLength?.() !== undefined) {
+      <small class="field-hint">Max length: {{ organizerNotes.maxLength?.() }} characters.</small>
+    }
   </label>
 </form>

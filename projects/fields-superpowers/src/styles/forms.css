@@ -4,6 +4,16 @@ label {
   gap: 6px;
   min-width: 0;
   font-weight: 600;
+
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    .required-marker {
+      color: var(--color-on-error-surface);
+    }
+  }
 }
 
 input,
@@ -31,8 +41,13 @@ select {
     cursor: not-allowed;
   }
 
-  &[aria-invalid='true'] {
+  &.field-invalid {
     border-color: var(--color-on-error-surface);
+    background: var(--color-error-surface);
+
+    &:focus-visible {
+      outline-color: var(--color-on-error-surface);
+    }
   }
 }
 
@@ -40,9 +55,18 @@ textarea {
   resize: none;
 }
 
+.field-hint,
 .field-error {
   margin: 0;
   font-size: 0.875rem;
+  font-weight: 400;
   line-height: 1.5;
+}
+
+.field-hint {
+  color: var(--color-text-muted);
+}
+
+.field-error {
   color: var(--color-on-error-surface);
 }
