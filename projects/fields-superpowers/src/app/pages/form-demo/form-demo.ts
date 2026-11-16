@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { form, FormField, FormRoot, max, min, minLength, required } from '@angular/forms/signals';
 import { FieldWrapper } from '../../components/field-wrapper/field-wrapper';
 import { SpeakerProposal } from '../../models/speaker-proposal';
+import { minWords } from '../../schema-functions/min-words';
 
 @Component({
   selector: 'app-form-demo',
@@ -23,13 +24,13 @@ export class FormDemo {
     required(path.longBio, { message: 'Long bio is required.' });
     required(path.shortBio, { message: 'Short bio is required.' });
 
-    minLength(path.longBio, 
-      (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 100 : 50), 
-      {message: (ctx) => `Long bio must contain at least ${ctx.state.minLength?.()} characters.`});
+    minWords(path.longBio, (ctx) => 
+      (ctx.valueOf(path.sessionType) === 'full' ? 20 : 10));
 
     min(path.durationMinutes, 
       (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 20 : 15), 
       {message: (ctx) => `Duration must be at least ${ctx.state.min?.()} minutes.`});
+
     max(path.durationMinutes, 
       (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 60 : 15), 
       {message: (ctx) => `Duration must be at most ${ctx.state.max?.()} minutes.`});
