@@ -59,6 +59,15 @@ We create a **field wrapper** — a component that receives the input control vi
 </app-field-wrapper>
 ```
 
+The initial wrapper displays the label, required star, hints from `min`, `max`,
+`minLength`, and `maxLength`, and errors after the field is touched. The control
+uses a native wrapping label without HTML IDs. Copy and AI buttons are reserved
+for the later metadata features below.
+
+Hint calculation lives in `getFieldHints(state)`, a pure function that returns
+an array of hint strings. It collects the value-range and length-range hints,
+filtering out `null` when a range does not apply.
+
 The wrapper needs information — label, required flag, limitations for hints, etc. The label we pass as an input. But the rest?
 
 ### The field state already knows a lot

@@ -1,109 +1,26 @@
 <h1>Speaker proposal</h1>
 
 <form [formRoot]="proposalForm">
-  <div class="field">
-    <label>
-      <span class="field-label">Session type</span>
-      <select [formField]="proposalForm.sessionType">
-        <option value="lightning">Lightning talk</option>
-        <option value="full">Full session</option>
-      </select>
-    </label>
-  </div>
+  <app-field-wrapper label="Session type">
+    <select [formField]="proposalForm.sessionType">
+      <option value="lightning">Lightning talk</option>
+      <option value="full">Full session</option>
+    </select>
+  </app-field-wrapper>
 
-  <div class="field">
-    @let duration = proposalForm.durationMinutes();
-    @let durationHint = 'between ' + duration.min?.() + ' and ' + duration.max?.();
-    <label>
-      <span class="field-label">Duration (minutes)</span>
-      <input
-        type="number"
-        [formField]="proposalForm.durationMinutes"
-        [attr.aria-description]="durationHint"
-      />
-    </label>
-    <small class="field-hint">{{ durationHint }}</small>
-    @if (duration.touched()) {
-      @for (error of duration.errors(); track error.kind) {
-        <span class="field-error" role="alert">{{ error.message }}</span>
-      }
-    }
-  </div>
+  <app-field-wrapper label="Duration (minutes)">
+    <input type="number" [formField]="proposalForm.durationMinutes" />
+  </app-field-wrapper>
 
-  <div class="field">
-    @let longBio = proposalForm.longBio();
-    @let longBioHint = 'Min length: ' + longBio.minLength?.() + ' characters.';
-    <label>
-      <span class="field-label">
-        Long bio
-        @if (longBio.required()) {
-          <span class="required-marker" aria-hidden="true">*</span>
-        }
-      </span>
-      <textarea
-        rows="3"
-        [formField]="proposalForm.longBio"
-        [attr.aria-description]="longBioHint"
-      ></textarea>
-    </label>
-    <button
-      type="button"
-      utility
-      title="copy"
-      aria-label="Copy long bio to clipboard"
-      (click)="clipboard.copy(longBio.value())"
-    >
-      <span aria-hidden="true">&#x29C9;</span>
-    </button>
-    <small class="field-hint">{{ longBioHint }}</small>
-    @if (longBio.touched()) {
-      @for (error of longBio.errors(); track error.kind) {
-        <span class="field-error" role="alert">{{ error.message }}</span>
-      }
-    }
-  </div>
+  <app-field-wrapper label="Long bio">
+    <textarea rows="3" [formField]="proposalForm.longBio"></textarea>
+  </app-field-wrapper>
 
-  <div class="field">
-    @let shortBio = proposalForm.shortBio();
-    <label>
-      <span class="field-label">
-        Short bio
-        @if (shortBio.required()) {
-          <span class="required-marker" aria-hidden="true">*</span>
-        }
-      </span>
-      <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
-    </label>
-    <button
-      type="button"
-      utility
-      title="copy"
-      aria-label="Copy short bio to clipboard"
-      (click)="clipboard.copy(shortBio.value())"
-    >
-      <span aria-hidden="true">&#x29C9;</span>
-    </button>
-    @if (shortBio.touched()) {
-      @for (error of shortBio.errors(); track error.kind) {
-        <span class="field-error" role="alert">{{ error.message }}</span>
-      }
-    }
-  </div>
+  <app-field-wrapper label="Short bio">
+    <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
+  </app-field-wrapper>
 
-  <div class="field">
-    @let organizerNotes = proposalForm.organizerNotes();
-    <label>
-      <span class="field-label">Organizer notes</span>
-      <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
-    </label>
-    <button
-      type="button"
-      utility
-      title="copy"
-      aria-label="Copy organizer notes to clipboard"
-      (click)="clipboard.copy(organizerNotes.value())"
-    >
-      <span aria-hidden="true">&#x29C9;</span>
-    </button>
-  </div>
+  <app-field-wrapper label="Organizer notes">
+    <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+  </app-field-wrapper>
 </form>

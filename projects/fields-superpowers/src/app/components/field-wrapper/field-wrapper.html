@@ -1,0 +1,19 @@
+<label>
+  <span class="field-label">
+    {{ label() }}
+    @if (state().required()) {
+      <span class="required-marker" aria-hidden="true">*</span>
+    }
+  </span>
+  <ng-content />
+</label>
+
+@for (hint of hints(); track $index) {
+  <small class="field-hint">{{ hint }}</small>
+}
+
+@if (state().touched()) {
+  @for (error of state().errors(); track error.kind) {
+    <span class="field-error" role="alert">{{ error.message }}</span>
+  }
+}

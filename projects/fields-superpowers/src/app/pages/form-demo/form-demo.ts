@@ -1,18 +1,16 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { form, FormField, FormRoot, max, min, minLength, required } from '@angular/forms/signals';
+import { FieldWrapper } from '../../components/field-wrapper/field-wrapper';
 import { SpeakerProposal } from '../../models/speaker-proposal';
-import { ClipboardService } from '../../services/clipboard.service';
 
 @Component({
   selector: 'app-form-demo',
   host: { class: 'demo' },
-  imports: [FormField, FormRoot],
+  imports: [FormField, FormRoot, FieldWrapper],
   templateUrl: './form-demo.html',
   styleUrl: './form-demo.css',
 })
 export class FormDemo {
-  protected readonly clipboard = inject(ClipboardService);
-
   protected readonly proposal = signal<SpeakerProposal>({
     sessionType: 'full',
     longBio: '',
