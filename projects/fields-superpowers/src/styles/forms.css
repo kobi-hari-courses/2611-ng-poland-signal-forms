@@ -6,20 +6,16 @@ label {
   min-width: 0;
 }
 
-.field-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  > label {
-    margin-inline-end: auto;
-  }
+.field {
+  position: relative;
 }
 
-.field > label,
-.field-header > label {
-  flex-direction: row;
+.field-label {
+  display: flex;
   align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding-inline-end: 36px;
 }
 
 label {

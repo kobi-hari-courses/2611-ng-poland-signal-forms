@@ -2,25 +2,27 @@
 
 <form [formRoot]="proposalForm">
   <div class="field">
-    <label for="session-type">Session type</label>
-    <select id="session-type" [formField]="proposalForm.sessionType">
-      <option value="lightning">Lightning talk</option>
-      <option value="full">Full session</option>
-    </select>
+    <label>
+      <span class="field-label">Session type</span>
+      <select [formField]="proposalForm.sessionType">
+        <option value="lightning">Lightning talk</option>
+        <option value="full">Full session</option>
+      </select>
+    </label>
   </div>
 
   <div class="field">
     @let duration = proposalForm.durationMinutes();
-    <label for="duration-minutes">Duration (minutes)</label>
-    <input
-      id="duration-minutes"
-      type="number"
-      [formField]="proposalForm.durationMinutes"
-      aria-describedby="duration-hint"
-    />
-    <small id="duration-hint" class="field-hint">
-      between {{ duration.min?.() }} and {{ duration.max?.() }}
-    </small>
+    @let durationHint = 'between ' + duration.min?.() + ' and ' + duration.max?.();
+    <label>
+      <span class="field-label">Duration (minutes)</span>
+      <input
+        type="number"
+        [formField]="proposalForm.durationMinutes"
+        [attr.aria-description]="durationHint"
+      />
+    </label>
+    <small class="field-hint">{{ durationHint }}</small>
     @if (duration.touched()) {
       @for (error of duration.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
@@ -30,32 +32,30 @@
 
   <div class="field">
     @let longBio = proposalForm.longBio();
-    <div class="field-header">
-      <label for="long-bio">
+    @let longBioHint = 'Min length: ' + longBio.minLength?.() + ' characters.';
+    <label>
+      <span class="field-label">
         Long bio
         @if (longBio.required()) {
           <span class="required-marker" aria-hidden="true">*</span>
         }
-      </label>
-      <button
-        type="button"
-        utility
-        title="copy"
-        aria-label="Copy long bio to clipboard"
-        (click)="clipboard.copy(longBio.value())"
-      >
-        <span aria-hidden="true">&#x29C9;</span>
-      </button>
-    </div>
-    <textarea
-      id="long-bio"
-      rows="3"
-      [formField]="proposalForm.longBio"
-      aria-describedby="long-bio-hint"
-    ></textarea>
-    <small id="long-bio-hint" class="field-hint">
-      Min length: {{ longBio.minLength?.() }} characters.
-    </small>
+      </span>
+      <textarea
+        rows="3"
+        [formField]="proposalForm.longBio"
+        [attr.aria-description]="longBioHint"
+      ></textarea>
+    </label>
+    <button
+      type="button"
+      utility
+      title="copy"
+      aria-label="Copy long bio to clipboard"
+      (click)="clipboard.copy(longBio.value())"
+    >
+      <span aria-hidden="true">&#x29C9;</span>
+    </button>
+    <small class="field-hint">{{ longBioHint }}</small>
     @if (longBio.touched()) {
       @for (error of longBio.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
@@ -65,24 +65,24 @@
 
   <div class="field">
     @let shortBio = proposalForm.shortBio();
-    <div class="field-header">
-      <label for="short-bio">
+    <label>
+      <span class="field-label">
         Short bio
         @if (shortBio.required()) {
           <span class="required-marker" aria-hidden="true">*</span>
         }
-      </label>
-      <button
-        type="button"
-        utility
-        title="copy"
-        aria-label="Copy short bio to clipboard"
-        (click)="clipboard.copy(shortBio.value())"
-      >
-        <span aria-hidden="true">&#x29C9;</span>
-      </button>
-    </div>
-    <textarea id="short-bio" rows="2" [formField]="proposalForm.shortBio"></textarea>
+      </span>
+      <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
+    </label>
+    <button
+      type="button"
+      utility
+      title="copy"
+      aria-label="Copy short bio to clipboard"
+      (click)="clipboard.copy(shortBio.value())"
+    >
+      <span aria-hidden="true">&#x29C9;</span>
+    </button>
     @if (shortBio.touched()) {
       @for (error of shortBio.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
@@ -92,18 +92,18 @@
 
   <div class="field">
     @let organizerNotes = proposalForm.organizerNotes();
-    <div class="field-header">
-      <label for="organizer-notes">Organizer notes</label>
-      <button
-        type="button"
-        utility
-        title="copy"
-        aria-label="Copy organizer notes to clipboard"
-        (click)="clipboard.copy(organizerNotes.value())"
-      >
-        <span aria-hidden="true">&#x29C9;</span>
-      </button>
-    </div>
-    <textarea id="organizer-notes" rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+    <label>
+      <span class="field-label">Organizer notes</span>
+      <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+    </label>
+    <button
+      type="button"
+      utility
+      title="copy"
+      aria-label="Copy organizer notes to clipboard"
+      (click)="clipboard.copy(organizerNotes.value())"
+    >
+      <span aria-hidden="true">&#x29C9;</span>
+    </button>
   </div>
 </form>
