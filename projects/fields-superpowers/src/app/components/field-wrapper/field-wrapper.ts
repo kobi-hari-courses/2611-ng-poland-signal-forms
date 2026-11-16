@@ -34,7 +34,7 @@ export class FieldWrapper {
     ].filter((hint) => hint !== null),
   );
 
-  copyToClipboard() {
-      this.clipboard.copy(this.formField().state().value());
+  copyToClipboard(): Promise<void> {
+    return this.clipboard.copy(String(this.state().value()));
   }
 }

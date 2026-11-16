@@ -54,9 +54,3 @@ button {
     }
   }
 }
-
-.field > button[utility] {
-  position: absolute;
-  inset-block-start: 0;
-  inset-inline-end: 0;
-}

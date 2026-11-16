@@ -1,0 +1,29 @@
+span.copy-icon {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  width: 1em;
+  height: 1em;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0.65em;
+    height: 0.75em;
+    border: 1.5px solid currentColor;
+    border-radius: 2px;
+  }
+
+  &::before {
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    border-inline-end: 0;
+    border-block-end: 0;
+  }
+
+  &::after {
+    inset-block-end: 0;
+    inset-inline-end: 0;
+  }
+}
