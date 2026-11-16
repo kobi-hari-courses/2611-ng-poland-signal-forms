@@ -25,15 +25,15 @@ export class FormDemo {
     required(path.longBio, { message: 'Long bio is required.' });
     required(path.shortBio, { message: 'Short bio is required.' });
 
-    minLength(path.longBio, ({ valueOf }) => (valueOf(path.sessionType) === 'full' ? 100 : 50), {
-      message: ({ state }) => `Long bio must contain at least ${state.minLength?.()} characters.`,
-    });
+    minLength(path.longBio, 
+      (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 100 : 50), 
+      {message: (ctx) => `Long bio must contain at least ${ctx.state.minLength?.()} characters.`});
 
-    min(path.durationMinutes, ({ valueOf }) => (valueOf(path.sessionType) === 'full' ? 20 : 15), {
-      message: ({ state }) => `Duration must be at least ${state.min?.()} minutes.`,
-    });
-    max(path.durationMinutes, ({ valueOf }) => (valueOf(path.sessionType) === 'full' ? 60 : 15), {
-      message: ({ state }) => `Duration must be at most ${state.max?.()} minutes.`,
-    });
+    min(path.durationMinutes, 
+      (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 20 : 15), 
+      {message: (ctx) => `Duration must be at least ${ctx.state.min?.()} minutes.`});
+    max(path.durationMinutes, 
+      (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 60 : 15), 
+      {message: (ctx) => `Duration must be at most ${ctx.state.max?.()} minutes.`});
   });
 }
