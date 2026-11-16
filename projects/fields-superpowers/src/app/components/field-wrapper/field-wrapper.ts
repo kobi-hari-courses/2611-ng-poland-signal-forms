@@ -1,7 +1,9 @@
-import { Component, computed, contentChild, input } from '@angular/core';
+import { Component, computed, contentChild, inject, input } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
 import { getMinMaxHint, getMinMaxLengthHint, getMinWordsHint } from './field-hints';
 import { MIN_WORDS } from '../../schema-functions/min-words';
+import { COPYABLE } from '../../schema-functions/copyable';
+import { ClipboardService } from '../../services/clipboard.service';
 
 @Component({
   selector: 'app-field-wrapper',
@@ -10,6 +12,7 @@ import { MIN_WORDS } from '../../schema-functions/min-words';
   host: { class: 'field' },
 })
 export class FieldWrapper {
+  readonly clipboard = inject(ClipboardService);
   readonly label = input.required<string>();
 
   readonly formField = contentChild.required(FormField);
@@ -19,7 +22,9 @@ export class FieldWrapper {
   readonly required = computed(() => this.state().required());
   readonly touched = computed(() => this.state().touched());
   readonly errors = computed(() => this.state().errors());
-  readonly minWords = computed(() => this.state().metadata(MIN_WORDS)?.()); 
+  readonly minWords = computed(() => this.state().metadata(MIN_WORDS)?.());
+  
+  readonly copyable = computed(() => this.state().metadata(COPYABLE)?.() ?? false);
 
   readonly hints = computed(() =>
     [

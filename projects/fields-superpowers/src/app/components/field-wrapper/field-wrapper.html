@@ -8,6 +8,14 @@
   <ng-content />
 </label>
 
+<div class="tools">
+  @if(copyable()) {
+    <button utility type="button">
+      <span class="copy-icon"></span>      
+    </button>
+  }
+</div>
+
 @for (hint of hints(); track $index) {
   <small class="field-hint">{{ hint }}</small>
 }

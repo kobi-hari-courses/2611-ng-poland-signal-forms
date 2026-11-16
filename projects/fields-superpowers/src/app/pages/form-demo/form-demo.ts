@@ -3,6 +3,7 @@ import { disabled, form, FormField, FormRoot, hidden, max, min, minLength, requi
 import { FieldWrapper } from '../../components/field-wrapper/field-wrapper';
 import { SpeakerProposal } from '../../models/speaker-proposal';
 import { minWords } from '../../schema-functions/min-words';
+import { copyable } from '../../schema-functions/copyable';
 
 @Component({
   selector: 'app-form-demo',
@@ -38,5 +39,9 @@ export class FormDemo {
     hidden(path.durationMinutes, {
       when: (ctx) => ctx.valueOf(path.sessionType) === 'lightning'
     });
+
+    copyable(path.organizerNotes, (ctx) => 
+      !ctx.value().includes('secret')
+    )
   });
 }
