@@ -1,6 +1,10 @@
-import { LogicFn, SchemaPath, validate } from "@angular/forms/signals";
+import { createMetadataKey, LogicFn, metadata, SchemaPath, validate } from "@angular/forms/signals";
+
+export const MIN_WORDS = createMetadataKey<number>();
 
 export function minWords(path: SchemaPath<string>, min: LogicFn<string, number>) {
+    metadata(path, MIN_WORDS, min);
+    
     validate(path, ctx => {
         const value = ctx.value();
         const wordCount = value.trim().split(/\s+/).length;
