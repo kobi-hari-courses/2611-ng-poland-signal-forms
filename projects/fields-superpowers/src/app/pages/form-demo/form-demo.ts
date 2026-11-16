@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { form, FormField, FormRoot, max, min, minLength, required } from '@angular/forms/signals';
+import { disabled, form, FormField, FormRoot, hidden, max, min, minLength, required } from '@angular/forms/signals';
 import { FieldWrapper } from '../../components/field-wrapper/field-wrapper';
 import { SpeakerProposal } from '../../models/speaker-proposal';
 import { minWords } from '../../schema-functions/min-words';
@@ -34,5 +34,9 @@ export class FormDemo {
     max(path.durationMinutes, 
       (ctx) => (ctx.valueOf(path.sessionType) === 'full' ? 60 : 15), 
       {message: (ctx) => `Duration must be at most ${ctx.state.max?.()} minutes.`});
+
+    hidden(path.durationMinutes, {
+      when: (ctx) => ctx.valueOf(path.sessionType) === 'lightning'
+    });
   });
 }
