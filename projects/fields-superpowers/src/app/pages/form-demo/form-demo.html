@@ -1,81 +1,75 @@
 <h1>Speaker proposal</h1>
 
 <form class="card" [formRoot]="proposalForm">
-  <label>
-    Session type
-    <select [formField]="proposalForm.sessionType">
+  <div class="field">
+    <label for="session-type">Session type</label>
+    <select id="session-type" [formField]="proposalForm.sessionType">
       <option value="lightning">Lightning talk</option>
       <option value="full">Full session</option>
     </select>
-  </label>
+  </div>
 
-  <label>
+  <div class="field">
     @let duration = proposalForm.durationMinutes();
-    Duration (minutes)
-    <input type="number" [formField]="proposalForm.durationMinutes" />
-    @if (duration.min?.() !== undefined && duration.max?.() !== undefined) {
-      <small class="field-hint">between {{ duration.min?.() }} and {{ duration.max?.() }}</small>
-    }
+    <label for="duration-minutes">Duration (minutes)</label>
+    <input
+      id="duration-minutes"
+      type="number"
+      [formField]="proposalForm.durationMinutes"
+      aria-describedby="duration-hint"
+    />
+    <small id="duration-hint" class="field-hint">
+      between {{ duration.min?.() }} and {{ duration.max?.() }}
+    </small>
     @if (duration.touched()) {
       @for (error of duration.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
       }
     }
-  </label>
+  </div>
 
-  <label>
+  <div class="field">
     @let longBio = proposalForm.longBio();
-    <span class="field-label">
+    <label for="long-bio">
       Long bio
       @if (longBio.required()) {
         <span class="required-marker" aria-hidden="true">*</span>
       }
-    </span>
-    <textarea rows="3" [formField]="proposalForm.longBio"></textarea>
-    @if (longBio.minLength?.() !== undefined) {
-      <small class="field-hint">Min length: {{ longBio.minLength?.() }} characters.</small>
-    }
-    @if (longBio.maxLength?.() !== undefined) {
-      <small class="field-hint">Max length: {{ longBio.maxLength?.() }} characters.</small>
-    }
+    </label>
+    <textarea
+      id="long-bio"
+      rows="3"
+      [formField]="proposalForm.longBio"
+      aria-describedby="long-bio-hint"
+    ></textarea>
+    <small id="long-bio-hint" class="field-hint">
+      Min length: {{ longBio.minLength?.() }} characters.
+    </small>
     @if (longBio.touched()) {
       @for (error of longBio.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
       }
     }
-  </label>
+  </div>
 
-  <label>
+  <div class="field">
     @let shortBio = proposalForm.shortBio();
-    <span class="field-label">
+    <label for="short-bio">
       Short bio
       @if (shortBio.required()) {
         <span class="required-marker" aria-hidden="true">*</span>
       }
-    </span>
-    <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
-    @if (shortBio.minLength?.() !== undefined) {
-      <small class="field-hint">Min length: {{ shortBio.minLength?.() }} characters.</small>
-    }
-    @if (shortBio.maxLength?.() !== undefined) {
-      <small class="field-hint">Max length: {{ shortBio.maxLength?.() }} characters.</small>
-    }
+    </label>
+    <textarea id="short-bio" rows="2" [formField]="proposalForm.shortBio"></textarea>
     @if (shortBio.touched()) {
       @for (error of shortBio.errors(); track error.kind) {
         <span class="field-error" role="alert">{{ error.message }}</span>
       }
     }
-  </label>
+  </div>
 
-  <label>
-    @let organizerNotes = proposalForm.organizerNotes();
-    Organizer notes
-    <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
-    @if (organizerNotes.minLength?.() !== undefined) {
-      <small class="field-hint">Min length: {{ organizerNotes.minLength?.() }} characters.</small>
-    }
-    @if (organizerNotes.maxLength?.() !== undefined) {
-      <small class="field-hint">Max length: {{ organizerNotes.maxLength?.() }} characters.</small>
-    }
-  </label>
+  <div class="field">
+    <label for="organizer-notes">Organizer notes</label>
+    <textarea id="organizer-notes" rows="2" [formField]="proposalForm.organizerNotes"></textarea>
+  </div>
 </form>
