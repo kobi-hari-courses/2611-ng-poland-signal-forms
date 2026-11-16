@@ -4,21 +4,4 @@
   gap: 16px;
   max-width: 640px;
   margin: 16px auto;
-
-  h1 {
-    color: var(--color-primary);
-  }
-
-  form {
-    gap: 16px;
-    padding: 20px;
-    border-color: var(--color-primary-border);
-    border-left: 3px solid var(--color-primary);
-    background: none;
-    box-shadow: 0 4px 16px var(--color-shadow-soft);
-
-    label {
-      color: var(--color-on-primary-surface);
-    }
-  }
 }

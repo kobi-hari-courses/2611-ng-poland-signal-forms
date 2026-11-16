@@ -6,13 +6,25 @@ label {
   min-width: 0;
 }
 
-.field > label {
+.field-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  > label {
+    margin-inline-end: auto;
+  }
+}
+
+.field > label,
+.field-header > label {
   flex-direction: row;
   align-items: center;
 }
 
 label {
   font-weight: 600;
+  color: var(--color-on-primary-surface);
 
   .required-marker {
     color: var(--color-on-error-surface);
@@ -72,4 +84,23 @@ textarea {
 
 .field-error {
   color: var(--color-on-error-surface);
+}
+h1 {
+  color: var(--color-primary);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--color-primary-border);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 8px;
+  background: none;
+  box-shadow: 0 4px 16px var(--color-shadow-soft);
+
+  p {
+    margin: 0;
+  }
 }

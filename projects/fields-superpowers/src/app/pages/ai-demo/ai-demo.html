@@ -4,7 +4,7 @@
 </header>
 
 @if (ai.isReady()) {
-  <form class="card" [formRoot]="promptField">
+  <form [formRoot]="promptField">
     <label>
       Prompt
       <textarea rows="4" [formField]="promptField"></textarea>

@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { form, FormField, FormRoot, max, min, minLength, required } from '@angular/forms/signals';
 import { SpeakerProposal } from '../../models/speaker-proposal';
+import { ClipboardService } from '../../services/clipboard.service';
 
 @Component({
   selector: 'app-form-demo',
@@ -10,6 +11,8 @@ import { SpeakerProposal } from '../../models/speaker-proposal';
   styleUrl: './form-demo.css',
 })
 export class FormDemo {
+  protected readonly clipboard = inject(ClipboardService);
+
   protected readonly proposal = signal<SpeakerProposal>({
     sessionType: 'full',
     longBio: '',

@@ -1,6 +1,6 @@
 <h1>Speaker proposal</h1>
 
-<form class="card" [formRoot]="proposalForm">
+<form [formRoot]="proposalForm">
   <div class="field">
     <label for="session-type">Session type</label>
     <select id="session-type" [formField]="proposalForm.sessionType">
@@ -30,12 +30,23 @@
 
   <div class="field">
     @let longBio = proposalForm.longBio();
-    <label for="long-bio">
-      Long bio
-      @if (longBio.required()) {
-        <span class="required-marker" aria-hidden="true">*</span>
-      }
-    </label>
+    <div class="field-header">
+      <label for="long-bio">
+        Long bio
+        @if (longBio.required()) {
+          <span class="required-marker" aria-hidden="true">*</span>
+        }
+      </label>
+      <button
+        type="button"
+        utility
+        title="copy"
+        aria-label="Copy long bio to clipboard"
+        (click)="clipboard.copy(longBio.value())"
+      >
+        <span aria-hidden="true">&#x29C9;</span>
+      </button>
+    </div>
     <textarea
       id="long-bio"
       rows="3"
@@ -54,12 +65,23 @@
 
   <div class="field">
     @let shortBio = proposalForm.shortBio();
-    <label for="short-bio">
-      Short bio
-      @if (shortBio.required()) {
-        <span class="required-marker" aria-hidden="true">*</span>
-      }
-    </label>
+    <div class="field-header">
+      <label for="short-bio">
+        Short bio
+        @if (shortBio.required()) {
+          <span class="required-marker" aria-hidden="true">*</span>
+        }
+      </label>
+      <button
+        type="button"
+        utility
+        title="copy"
+        aria-label="Copy short bio to clipboard"
+        (click)="clipboard.copy(shortBio.value())"
+      >
+        <span aria-hidden="true">&#x29C9;</span>
+      </button>
+    </div>
     <textarea id="short-bio" rows="2" [formField]="proposalForm.shortBio"></textarea>
     @if (shortBio.touched()) {
       @for (error of shortBio.errors(); track error.kind) {
@@ -69,7 +91,19 @@
   </div>
 
   <div class="field">
-    <label for="organizer-notes">Organizer notes</label>
+    @let organizerNotes = proposalForm.organizerNotes();
+    <div class="field-header">
+      <label for="organizer-notes">Organizer notes</label>
+      <button
+        type="button"
+        utility
+        title="copy"
+        aria-label="Copy organizer notes to clipboard"
+        (click)="clipboard.copy(organizerNotes.value())"
+      >
+        <span aria-hidden="true">&#x29C9;</span>
+      </button>
+    </div>
     <textarea id="organizer-notes" rows="2" [formField]="proposalForm.organizerNotes"></textarea>
   </div>
 </form>
