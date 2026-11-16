@@ -1,13 +1,7 @@
 import type { ReadonlyFieldState } from '@angular/forms/signals';
 
-export function getFieldHints(state: ReadonlyFieldState<unknown>): string[] {
-  return [
-    getMinMaxHint(state), 
-    getMinMaxLengthHint(state)
-  ].filter((hint) => hint !== null);
-}
 
-function getMinMaxHint(state: ReadonlyFieldState<unknown>): string | null {
+export function getMinMaxHint(state: ReadonlyFieldState<unknown>): string | null {
   const min = state.min?.();
   const max = state.max?.();
 
@@ -24,7 +18,7 @@ function getMinMaxHint(state: ReadonlyFieldState<unknown>): string | null {
   return null;
 }
 
-function getMinMaxLengthHint(state: ReadonlyFieldState<unknown>): string | null {
+export function getMinMaxLengthHint(state: ReadonlyFieldState<unknown>): string | null {
   const minLength = state.minLength?.();
   const maxLength = state.maxLength?.();
 

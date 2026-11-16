@@ -1,6 +1,6 @@
 import { Component, computed, contentChild, input } from '@angular/core';
 import { FormField } from '@angular/forms/signals';
-import { getFieldHints } from './field-hints';
+import { getMinMaxHint, getMinMaxLengthHint } from './field-hints';
 
 @Component({
   selector: 'app-field-wrapper',
@@ -14,5 +14,10 @@ export class FieldWrapper {
   readonly formField = contentChild.required(FormField);
 
   readonly state = computed(() => this.formField().state());
-  protected readonly hints = computed(() => getFieldHints(this.state()));
+  protected readonly hints = computed(() =>
+    [
+      getMinMaxHint(this.state()), 
+      getMinMaxLengthHint(this.state())
+    ].filter((hint) => hint !== null),
+  );
 }
