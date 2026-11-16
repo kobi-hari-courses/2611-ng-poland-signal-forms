@@ -1,0 +1,31 @@
+<h1>Speaker proposal</h1>
+
+<form class="card" (submit)="$event.preventDefault()">
+  <label>
+    Session type
+    <select [formField]="proposalForm.sessionType">
+      <option value="lightning">Lightning talk</option>
+      <option value="full">Full session</option>
+    </select>
+  </label>
+
+  <label>
+    Long bio
+    <textarea rows="6" [formField]="proposalForm.longBio"></textarea>
+  </label>
+
+  <label>
+    Short bio
+    <textarea rows="3" [formField]="proposalForm.shortBio"></textarea>
+  </label>
+
+  <label>
+    Duration (minutes)
+    <input type="number" [formField]="proposalForm.durationMinutes" />
+  </label>
+
+  <label>
+    Organizer notes
+    <textarea rows="4" [formField]="proposalForm.organizerNotes"></textarea>
+  </label>
+</form>

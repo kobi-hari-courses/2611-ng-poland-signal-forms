@@ -1,47 +1,7 @@
-<main class="demo">
-  <h1>Services Playground</h1>
+<app-navbar />
 
-  <section class="card">
-    <h2>🔔 Notification Service</h2>
-    <input
-      #messageInput
-      type="text"
-      placeholder="Notification message"
-      [value]="message()"
-      (input)="message.set(messageInput.value)"
-    />
-    <div class="actions">
-      <button type="button" class="info" (click)="showInfo()">Show info</button>
-      <button type="button" class="error" (click)="showError()">Show error</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <h2>🤖 AI Service</h2>
-    <div class="status">
-      <span class="badge" [class.ready]="ai.isReady()">
-        {{ ai.isReady() ? 'AI ready' : 'AI not ready' }} ({{ ai.status() }})
-      </span>
-      @if (canEnable()) {
-        <button type="button" class="secondary" (click)="ai.enable()">Enable AI</button>
-      }
-    </div>
-    <textarea
-      #promptInput
-      rows="4"
-      placeholder="Write a prompt..."
-      [value]="prompt()"
-      (input)="prompt.set(promptInput.value)"
-    ></textarea>
-    <div class="actions">
-      <button type="button" [disabled]="!canRun()" (click)="runPrompt()">
-        {{ isRunning() ? 'Thinking...' : '✨ Run prompt' }}
-      </button>
-    </div>
-    @if (answer()) {
-      <pre class="answer">{{ answer() }}</pre>
-    }
-  </section>
+<main>
+  <router-outlet />
 </main>
 
 <app-notifications-host />

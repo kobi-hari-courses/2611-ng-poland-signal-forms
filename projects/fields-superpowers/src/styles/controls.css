@@ -1,0 +1,99 @@
+button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  gap: 8px;
+  font: inherit;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  &[secondary] {
+    background: var(--color-neutral);
+    color: var(--color-on-neutral);
+  }
+
+  &[info] {
+    background: var(--color-on-info-surface);
+  }
+
+  &[error] {
+    background: var(--color-on-error-surface);
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+
+  p {
+    margin: 0;
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo {
+  flex-shrink: 0;
+  gap: 24px;
+  width: 100%;
+  max-width: 640px;
+  margin: 40px auto;
+  padding: 0 16px;
+
+  h1,
+  h2 {
+    margin: 0;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+}
+
+.spinner {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

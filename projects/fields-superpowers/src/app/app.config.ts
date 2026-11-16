@@ -1,9 +1,8 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 import { provideAi } from './services/ai/provide-ai';
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    provideBrowserGlobalErrorListeners(), 
-    provideAi()
-  ],
+  providers: [provideBrowserGlobalErrorListeners(), provideRouter(routes), provideAi()],
 };

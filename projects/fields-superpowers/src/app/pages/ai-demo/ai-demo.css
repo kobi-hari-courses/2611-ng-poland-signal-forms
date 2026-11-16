@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-direction: column;
+
+  header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--color-neutral);
+      color: var(--color-on-neutral);
+      font-size: 0.875rem;
+      font-weight: 600;
+
+      &.ready {
+        background: var(--color-info-surface);
+        color: var(--color-on-info-surface);
+      }
+    }
+  }
+
+  section {
+    .result {
+      min-height: 6rem;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+<header>
+  <h1>AI prompt</h1>
+  <span class="badge" [class.ready]="ai.isReady()" role="status">{{ statusLabel() }}</span>
+</header>
+
+@if (ai.isReady()) {
+  <form class="card" (submit)="$event.preventDefault(); send()">
+    <label>
+      Prompt
+      <textarea rows="4" [formField]="promptField"></textarea>
+    </label>
+    <button type="submit" [disabled]="!canSend()">
+      @if (busy()) {
+        <span class="spinner" aria-hidden="true"></span>
+      }
+      {{ busy() ? 'Sending...' : 'SEND' }}
+    </button>
+    @if (error()) {
+      <p class="field-error" role="alert">{{ error() }}</p>
+    }
+  </form>
+
+  <section class="card" [attr.aria-busy]="busy()">
+    <h2>Result</h2>
+    <p class="result" role="status">{{ result() }}</p>
+  </section>
+} @else {
+  <section class="card">
+    <h2>Local AI is not supported or enabled</h2>
+    <p>{{ statusMessage() }}</p>
+    @if (canEnable()) {
+      <button type="button" secondary (click)="ai.enable()">Enable AI</button>
+    }
+  </section>
+}

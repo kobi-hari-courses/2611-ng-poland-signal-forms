@@ -1,0 +1,12 @@
+<h1>Notifications</h1>
+
+<div class="card">
+  <label>
+    Message
+    <input type="text" [formField]="messageField" />
+  </label>
+  <div class="actions">
+    <button type="button" info (click)="show('info')">Show info</button>
+    <button type="button" error (click)="show('error')">Show error</button>
+  </div>
+</div>

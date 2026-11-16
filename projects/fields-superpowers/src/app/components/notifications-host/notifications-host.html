@@ -2,7 +2,8 @@
   <button
     type="button"
     class="snackbar"
-    [class]="notification.kind"
+    [attr.info]="notification.kind === 'info' ? '' : null"
+    [attr.error]="notification.kind === 'error' ? '' : null"
     title="Click to dismiss"
     (click)="dismiss(notification.id)"
   >

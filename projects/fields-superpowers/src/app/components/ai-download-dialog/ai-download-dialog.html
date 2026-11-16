@@ -5,14 +5,14 @@
       <progress [value]="progress()" max="1"></progress>
       <p class="percent">{{ percent() }}%</p>
       <div class="actions">
-        <button type="button" class="secondary" (click)="dismiss()">Cancel</button>
+        <button type="button" secondary (click)="dismiss()">Cancel</button>
       </div>
     }
     @case ('error') {
       <h2>Download failed</h2>
-      <p class="error">{{ error() }}</p>
+      <p class="field-error" role="alert">{{ error() }}</p>
       <div class="actions">
-        <button type="button" class="secondary" (click)="dismiss()">Close</button>
+        <button type="button" secondary (click)="dismiss()">Close</button>
         <button type="button" (click)="download()">Retry</button>
       </div>
     }
@@ -23,7 +23,7 @@
         download, which may be large. Do you want to download it now?
       </p>
       <div class="actions">
-        <button type="button" class="secondary" (click)="dismiss()">Not now</button>
+        <button type="button" secondary (click)="dismiss()">Not now</button>
         <button type="button" (click)="download()">Download</button>
       </div>
     }
