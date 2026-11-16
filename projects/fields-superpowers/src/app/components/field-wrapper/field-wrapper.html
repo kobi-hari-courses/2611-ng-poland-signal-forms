@@ -10,7 +10,7 @@
 
 <div class="tools">
   @if(copyable()) {
-    <button utility type="button">
+    <button utility type="button" (click)="copyToClipboard()">
       <span class="copy-icon"></span>      
     </button>
   }

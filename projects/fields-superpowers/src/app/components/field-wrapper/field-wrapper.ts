@@ -33,4 +33,8 @@ export class FieldWrapper {
       getMinMaxLengthHint(this.state().minLength?.(), this.state().maxLength?.()) 
     ].filter((hint) => hint !== null),
   );
+
+  copyToClipboard() {
+      this.clipboard.copy(this.formField().state().value());
+  }
 }
