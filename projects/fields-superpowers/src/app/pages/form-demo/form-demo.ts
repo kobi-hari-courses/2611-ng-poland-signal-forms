@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { form, FormField, FormRoot } from '@angular/forms/signals';
 import { SpeakerProposal } from '../../models/speaker-proposal';
 
 @Component({
   selector: 'app-form-demo',
   host: { class: 'demo' },
-  imports: [FormField],
+  imports: [FormField, FormRoot],
   templateUrl: './form-demo.html',
   styleUrl: './form-demo.css',
 })

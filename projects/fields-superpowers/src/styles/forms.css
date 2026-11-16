@@ -37,7 +37,7 @@ select {
 }
 
 textarea {
-  resize: vertical;
+  resize: none;
 }
 
 .field-error {

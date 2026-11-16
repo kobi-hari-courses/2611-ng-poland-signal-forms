@@ -1,5 +1,5 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { form, FormField } from '@angular/forms/signals';
+import { form, FormField, FormRoot } from '@angular/forms/signals';
 import { AiService, AiStatus } from '../../services/ai/ai.service';
 
 const AI_STATUS_MESSAGES: Record<AiStatus, string> = {
@@ -27,36 +27,43 @@ const AI_STATUS_LABELS: Record<AiStatus, string> = {
 @Component({
   selector: 'app-ai-demo',
   host: { class: 'demo' },
-  imports: [FormField],
+  imports: [FormField, FormRoot],
   templateUrl: './ai-demo.html',
   styleUrl: './ai-demo.css',
 })
 export class AiDemo {
   protected readonly ai = inject(AiService);
   protected readonly prompt = signal('');
-  protected readonly promptField = form(this.prompt);
   protected readonly result = signal('');
-  protected readonly error = signal('');
-  protected readonly busy = signal(false);
+  protected readonly promptField = form(this.prompt, {
+    submission: {
+      action: async (field) => {
+        const prompt = field().value();
+        if (!prompt.trim()) {
+          return { kind: 'required', message: 'Enter a prompt.' };
+        }
+
+        this.result.set('');
+        try {
+          this.result.set(await this.ai.runPrompt(prompt));
+          return undefined;
+        } catch (error) {
+          return {
+            kind: 'ai',
+            message: error instanceof Error ? error.message : String(error),
+          };
+        }
+      },
+    },
+  });
   protected readonly statusLabel = computed(() => AI_STATUS_LABELS[this.ai.status()]);
   protected readonly statusMessage = computed(() => AI_STATUS_MESSAGES[this.ai.status()]);
   protected readonly canEnable = computed(() => ['declined', 'error'].includes(this.ai.status()));
   protected readonly canSend = computed(
-    () => this.ai.isReady() && !this.busy() && this.prompt().trim() !== '',
+    () =>
+      this.ai.isReady() &&
+      !this.promptField().submitting() &&
+      !this.promptField().invalid() &&
+      this.prompt().trim() !== '',
   );
-
-  protected async send() {
-    if (!this.canSend()) return;
-
-    this.busy.set(true);
-    this.result.set('');
-    this.error.set('');
-    try {
-      this.result.set(await this.ai.runPrompt(this.prompt()));
-    } catch (error) {
-      this.error.set(error instanceof Error ? error.message : String(error));
-    } finally {
-      this.busy.set(false);
-    }
-  }
 }

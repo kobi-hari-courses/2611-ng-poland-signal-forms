@@ -1,6 +1,6 @@
 <h1>Speaker proposal</h1>
 
-<form class="card" (submit)="$event.preventDefault()">
+<form class="card" [formRoot]="proposalForm">
   <label>
     Session type
     <select [formField]="proposalForm.sessionType">
@@ -11,12 +11,12 @@
 
   <label>
     Long bio
-    <textarea rows="6" [formField]="proposalForm.longBio"></textarea>
+    <textarea rows="3" [formField]="proposalForm.longBio"></textarea>
   </label>
 
   <label>
     Short bio
-    <textarea rows="3" [formField]="proposalForm.shortBio"></textarea>
+    <textarea rows="2" [formField]="proposalForm.shortBio"></textarea>
   </label>
 
   <label>
@@ -26,6 +26,6 @@
 
   <label>
     Organizer notes
-    <textarea rows="4" [formField]="proposalForm.organizerNotes"></textarea>
+    <textarea rows="2" [formField]="proposalForm.organizerNotes"></textarea>
   </label>
 </form>

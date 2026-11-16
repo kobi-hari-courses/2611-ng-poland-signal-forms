@@ -4,23 +4,23 @@
 </header>
 
 @if (ai.isReady()) {
-  <form class="card" (submit)="$event.preventDefault(); send()">
+  <form class="card" [formRoot]="promptField">
     <label>
       Prompt
       <textarea rows="4" [formField]="promptField"></textarea>
     </label>
     <button type="submit" [disabled]="!canSend()">
-      @if (busy()) {
+      @if (promptField().submitting()) {
         <span class="spinner" aria-hidden="true"></span>
       }
-      {{ busy() ? 'Sending...' : 'SEND' }}
+      {{ promptField().submitting() ? 'Sending...' : 'SEND' }}
     </button>
-    @if (error()) {
-      <p class="field-error" role="alert">{{ error() }}</p>
+    @for (error of promptField().errors(); track error) {
+      <p class="field-error" role="alert">{{ error.message }}</p>
     }
   </form>
 
-  <section class="card" [attr.aria-busy]="busy()">
+  <section class="card" [attr.aria-busy]="promptField().submitting()">
     <h2>Result</h2>
     <p class="result" role="status">{{ result() }}</p>
   </section>
